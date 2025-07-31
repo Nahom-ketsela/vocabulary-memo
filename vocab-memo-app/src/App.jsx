@@ -1,23 +1,27 @@
 import React from 'react';
-import LanguageSelector from './components/LanguageSelector';
-import VocabularyForm from './components/VocabularyForm';
-import VocabularyList from './components/VocabularyList';
-import TestMode from './components/TestMode';
-import ProgressBar from './components/ProgressBar';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Landing from './pages/Landing';
+import AppHome from './pages/AppHome';
+import Test from './pages/Test';
+import Results from './pages/Results';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
-
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <LanguageSelector />
-      <VocabularyForm />
-      <VocabularyList />
-      <ProgressBar />
-      <TestMode />
-
-
-    </div>
+    <Router>
+      <div className="min-h-screen flex flex-col bg-gray-100">
+        <Navbar />
+        <main className="flex-grow p-6">
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/app" element={<AppHome />} />
+            <Route path="/test" element={<Test />} />
+            <Route path="/results" element={<Results />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 }
-
-export default App;
