@@ -6,6 +6,13 @@ import Test from './pages/Test';
 import Results from './pages/Results';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ProtectedRoute from './components/ProtectedRoute';
+
+
+
+
 
 export default function App() {
   return (
@@ -15,13 +22,36 @@ export default function App() {
         <main className="flex-grow p-6">
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/app" element={<AppHome />} />
-            <Route path="/test" element={<Test />} />
-            <Route path="/results" element={<Results />} />
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute>
+                  <AppHome />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/test"
+              element={
+                <ProtectedRoute>
+                  <Test />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/results"
+              element={
+                <ProtectedRoute>
+                  <Results />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
           </Routes>
         </main>
         <Footer />
       </div>
-    </Router>
+    </Router >
   );
 }
