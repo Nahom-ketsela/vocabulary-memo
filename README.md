@@ -102,17 +102,10 @@ service cloud.firestore {
 4. Push to the branch: `git push origin feature/awesome`
 5. Open a pull request
 
----
-
-## 📜 License
-
-MIT License © [Your Name](https://github.com/yourusername)
-
----
 
 ## 🌐 Live Demo
 
-> Coming soon… or deploy with [Vercel](https://vercel.com) 
+> deployed with [Vercel](https://vocabulary-memo-mocha.vercel.app/) 
 
 ---
 
