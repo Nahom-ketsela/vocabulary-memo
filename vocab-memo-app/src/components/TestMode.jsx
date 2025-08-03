@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     startTest,
     submitAnswer,
     resetTest,
 } from '../features/test/testSlice';
+
+import { db } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function TestMode() {
     const dispatch = useDispatch();
@@ -16,8 +20,8 @@ export default function TestMode() {
     const index = test?.index ?? 0;
     const inProgress = test?.inProgress ?? false;
 
-
     const [input, setInput] = useState('');
+    const { user } = useAuth();
 
     const handleStart = () => {
         dispatch(startTest(vocab));
@@ -34,6 +38,36 @@ export default function TestMode() {
         dispatch(resetTest());
     };
 
+    // Save results to Firestore after test is completed
+    useEffect(() => {
+        const shouldSave = inProgress && index >= answers.length && user;
+        if (!shouldSave) return;
+
+        const hits = answers.filter((a) => a.isHit).length;
+        const ratio = Math.round((hits / answers.length) * 100);
+
+        const saveResult = async () => {
+            try {
+                await addDoc(collection(db, 'results'), {
+                    uid: user.uid,
+                    timestamp: Date.now(),
+                    total: answers.length,
+                    hits,
+                    ratio,
+                    answers,
+                    languages,
+                });
+
+                console.log('✅ Test result saved to Firestore.');
+            } catch (error) {
+                console.error('❌ Failed to save test result:', error);
+            }
+        };
+
+        saveResult();
+    }, [index, inProgress, user, answers]);
+
+    // Ensure enough data to start
     if (languages.length < 2 || vocab.length < 5) {
         return (
             <div className="text-center text-sm text-gray-500 mt-4">
@@ -42,6 +76,7 @@ export default function TestMode() {
         );
     }
 
+    // Start screen
     if (!inProgress) {
         return (
             <div className="w-full max-w-md mx-auto mt-6 text-center">
@@ -55,6 +90,7 @@ export default function TestMode() {
         );
     }
 
+    // Completion screen
     if (index >= answers.length) {
         const hits = answers.filter((a) => a.isHit).length;
         const ratio = Math.round((hits / answers.length) * 100);
@@ -89,6 +125,7 @@ export default function TestMode() {
         );
     }
 
+    // Active test screen
     return (
         <div className="w-full max-w-md mx-auto mt-6 p-4 bg-white rounded-xl shadow-md space-y-4">
             <div className="flex justify-between items-center text-sm text-gray-500">
